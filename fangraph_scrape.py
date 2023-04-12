@@ -10,21 +10,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-class fangraph_scrape:
+class Fangraph_scrape:
     """
     fangraph_scrape class uses selenium and beautiful soup to scrape
     mlb data from fangraph.com
     """
     def __init__(self):
-
-        self.TEAMS_URL = 'https://www.fangraphs.com/depthcharts.aspx?position=Standings'
-        self.ROSTER_URL = 'https://www.fangraphs.com/teams/mets'
         
         #get the chrome web driver
-        self.driver = self.get_driver() 
+        self.driver = self._get_driver() 
 
 
-    def get_driver(self):
+    def _get_driver(self):
         """
         Install the chrome webdriver and load options
         """
