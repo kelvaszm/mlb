@@ -42,7 +42,11 @@ class fangraph_scrape:
         """
         Use the webdriver and requests to get the beautiful soup page.
         """
-        pass
+        self.driver.get(url)
+        page = requests.get(url)
+        
+        return BeautifulSoup(page.content, "html.parser")
+
 
     def team(self):
         """
