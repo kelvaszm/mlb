@@ -74,18 +74,43 @@ class Fangraph_scrape:
         
         #get the team ids from the href links.
         #This will be the teams pk
-        href_col = self.get_href(teams_table, regex)
+        team_ids = self.get_href(teams_table, regex)
         
-        team_df.insert(0, 'Team Id', href_col)
+        team_df.insert(0, 'Team Id', team_ids)
         
         return team_df
 
 
-    def roster(self):
+    def roster(self, soup_page):
         """
         Scrape the roster for each mlb team.
         """
-        pass
+
+        #html class for teams standing table
+        table_class_name = 'team-stats-table'
+
+        #regex to find the playerid in the href
+        regex = r'playerid=(\d+)'
+        
+        #list of dataframes to hold roster
+        team_roster = []
+
+        players_table = soup_page.find_all(class_ = "team-stats-table")
+        players_table = [row for table in players_table for row in table]
+         
+        for table in players_table:
+            df = pandas.read_html(table.prettify())[0]
+        
+            #get the team ids from the href links.
+            #This will be the teams pk
+            ids = self.get_href(table, regex)
+            df.insert(0, 'Player Id', ids)
+            
+            #Remove team total row
+            df = df[df['Name'] != 'Team Total']
+
+            team_roster.append(df.replace({numpy.nan:None}).drop_duplicates()) 
+        return team_roster 
 
 
     def get_href(self, href_soup,  regex):
