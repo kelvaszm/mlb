@@ -49,21 +49,31 @@ class Fangraph_scrape:
         """
         Scrape the mlb teams dataset.
         """
+        #html class for teams standing table
         table_class_name = 'depth-charts-aspx_table'
+        
+        #list for column names
         col_list = []
+        
+        #regex to find the team id in the href
         regex = r'teamid=(\d+)'
 
         teams_table = soup_page.find_all(class_ = table_class_name)
         team_df = pandas.read_html(teams_table[0].prettify())[0]
+        
+        #Pull all columns except Team totals
         for col in team_df.columns:
             if col[1] != 'Team':
                 col_list.append(col[1] + ' ' + col[0])
             
             else:
                 col_list.append(col[1])
-
+        
+        #assign col names to dataframe
         team_df.columns = col_list
         
+        #get the team ids from the href links.
+        #This will be the teams pk
         href_col = self.get_href(teams_table, regex)
         
         team_df.insert(0, 'Team Id', href_col)
@@ -84,11 +94,13 @@ class Fangraph_scrape:
         """
         href_list = []
         for href in href_soup:
-
+            #find all a tags with a href
             a_tags = href.find_all('a', href=True)
-
+            
+            #pull all the ids with the regext
             for tag in a_tags:
                 ids = re.findall(regex , str(tag))
+                #check to make sure the ids is a list
                 if len(ids):
                     href_list.append(ids[0])
 
