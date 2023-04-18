@@ -106,7 +106,8 @@ class Fangraph_scrape:
         
             #get the team ids from the href links.
             #This will be the teams pk
-            ids = self.get_href(table, player_regex)
+            ids = self.get_href(table, player_regex).drop_duplicates()
+
             df.insert(0, 'Player Id', ids)
             
             pos = self.get_href(table, pos_regex)
@@ -135,7 +136,7 @@ class Fangraph_scrape:
                 if len(ids):
                     href_list.append(ids[0])
 
-        return pandas.Series(href_list).drop_duplicates()
+        return pandas.Series(href_list)
 
 
     def __del__(self):
