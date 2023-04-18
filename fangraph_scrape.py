@@ -90,7 +90,10 @@ class Fangraph_scrape:
         table_class_name = 'team-stats-table'
 
         #regex to find the playerid in the href
-        regex = r'playerid=(\d+)'
+        player_regex = r'playerid=(\d+)'
+
+        #regex to find the player's position
+        pos_regex = r'position=([A-Za-z0-9]+)'
         
         #list of dataframes to hold roster
         team_roster = []
@@ -103,9 +106,12 @@ class Fangraph_scrape:
         
             #get the team ids from the href links.
             #This will be the teams pk
-            ids = self.get_href(table, regex)
+            ids = self.get_href(table, player_regex)
             df.insert(0, 'Player Id', ids)
             
+            pos = self.get_href(table, pos_regex)
+            df.insert(2, 'Position', pos)
+
             #Remove team total row
             df = df[df['Name'] != 'Team Total']
 
