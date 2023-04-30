@@ -81,7 +81,7 @@ class Fangraph_scrape:
         return team_df
 
 
-    def roster(self, soup_page):
+    def roster(self, soup_page, team_id):
         """
         Scrape the roster for each mlb team.
         """
@@ -110,9 +110,13 @@ class Fangraph_scrape:
 
             df.insert(0, 'Player Id', ids)
             
+            #insert player's team_id
+            df.insert(1, 'team_id', team_id)
+            
+            #insert player's position
             pos = self.get_href(table, pos_regex)
-            df.insert(2, 'Position', pos)
-
+            df.insert(3, 'Position', pos)
+            
             #Remove team total row
             df = df[df['Name'] != 'Team Total']
 
