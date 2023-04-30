@@ -1,11 +1,25 @@
 #sql_connect.py
 import sqlalchemy
+import keyring
 
 class Sql_connect:
     """
     sql_connect class will create an sql alchemy object to handle statements.
     """
-    def __init__(self, conn_string):
+    def __init__(self, database_config):
+        
+        user = database_config['user']
+        host = database_config['host']
+        port = database_config['port']
+        schema = database_config['schema']
+
+        conn_string = 'mysql+mysqlconnector://{}:{}@{}:{}/{}'\
+                        .format(user,
+                                keyring.get_password(user, schema),
+                                host,
+                                port,
+                                schema)
+
         #create sql_alchemy engine
         self.engine = self.get_engine(conn_string)
 
