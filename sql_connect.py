@@ -15,7 +15,7 @@ class Sql_connect:
 
         conn_string = 'mysql+mysqlconnector://{}:{}@{}:{}/{}'\
                         .format(user,
-                                keyring.get_password(user, schema),
+                                keyring.get_password(schema, user),
                                 host,
                                 port,
                                 schema)
