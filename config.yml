@@ -1,0 +1,9 @@
+#config.yml
+team_path: https://www.fangraphs.com/depthcharts.aspx?position=Standings
+roster_path: https://www.fangraphs.com/teams/
+database:
+  host: 192.168.1.207
+  schema: MLB
+  user: zmk2b
+  pass:
+
