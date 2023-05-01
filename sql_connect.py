@@ -39,7 +39,7 @@ class Sql_connect:
 
         table = sqlalchemy.Table(table_name, md, autoload_with=self.engine)
 
-        return [(col.name, col.type) for col in table.c]
+        return [(str(col.name), str(col.type)) for col in table.c]
 
 
     def load(self, df, table_name):
