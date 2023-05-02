@@ -3,7 +3,10 @@ from fangraph_scrape import Fangraph_scrape
 from sql_connect import Sql_connect
 from config import Config
 import pandas
+import numpy
+
 def main():
+    
     #yaml config
     config = Config()
 
@@ -21,18 +24,39 @@ def main():
     team_soup = fangraph.get_soup_page(teams_url)
     team_df = fangraph.team(team_soup)
     
-    #df cols need to match the sql table
-    cols = sql.get_column_datatypes('TEAMS')
-    team_df.columns = [col[0] for col in cols]
-    
     #insert teams into database
-    row_count = sql.load(team_df, 'TEAMS')
-    
-    print(str(row_count) + ' rows interted into TEAMS')
-    
+    row_count = process_df(team_df, sql, 'TEAMS')
+    print(str(row_count) + ' rows inserted into TEAMS')
+
     #scrape the player rosters from each team and load into dataframe
-    roster_soup = fangraph.get_soup_page(roster_url)
-    roster_list = fangraph.roster(roster_soup)
+    for team in team_df.itertuples(index=False):
+        
+        roster_soup = fangraph.get_soup_page(roster_url + team[1].replace(' ', '-'))
+        roster_list = fangraph.roster(roster_soup, team[0])
+        
+        #load each team roster into database
+        row_count = process_df(roster_list[0], sql, 'PLAYERS_HITTING')
+        print(str(row_count) + ' rows inserted for ' + team[1] + ' into PLAYERS_HITTING')
+
+        row_count = process_df(roster_list[1], sql, 'PLAYERS_PITCHING')
+        print(str(row_count) + ' rows inserted for ' + team[1] + ' into PLAYERS_PITCHING')
+
+
+def process_df(df, sql, table_name):
+    #df cols need to match the sql table
+    cols = sql.get_column_datatypes(table_name)
+    df.columns = [col[0] for col in cols]
+    
+    #replace None with Nans
+    df = df.fillna(value=numpy.nan)
+    
+    #remove any percent signs
+    for col in df.items():
+        if(col[1].dtype == 'object'):
+            df[col[0]] = df[col[0]].astype(str).str.replace('%', '')
+
+    #insert df into database
+    return sql.load(df, table_name)
 
 
 if __name__ == '__main__':
