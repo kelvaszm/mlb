@@ -2,8 +2,9 @@
 team_path: https://www.fangraphs.com/depthcharts.aspx?position=Standings
 roster_path: https://www.fangraphs.com/teams/
 database:
-  host: 192.168.1.207
-  schema: MLB
-  user: zmk2b
-  pass:
+  host: host_name
+  schema: schema_name 
+  user: user_name
+  pass: #keyring
+  port: port_number
 
